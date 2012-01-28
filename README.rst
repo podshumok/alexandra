@@ -6,16 +6,20 @@ alexandra is a thin abstraction over pycassa to interact with Cassandra from Dja
 Installation
 ************
 
-Requires Django and `pycassa 0.20`_ or greater::
+Requires Django and `pycassa 1.40`_ or greater::
 
     pip install -e git+http://github.com/dziegler/alexandra.git#egg=alexandra  
     
-add CASSANDRA_CLUSTER and CASSANDRA_KEYSPACE to ``settings.py`` ::
+add CASSANDRA CLUSTER and KEYSPACE to ``settings.py`` ::
     
-    CASSANDRA_CLUSTER = ['localhost:9160']
-    CASSANDRA_KEYSPACE = 'my_keyspace'
+    CASSANDRA = {
+        'default': {
+            'CLUSTER':  ('localhost:9160',),
+            'KEYSPACE': 'my_keyspace'
+    },
+}
 
-.. _`pycassa 0.20`: http://github.com/vomjom/pycassa
+.. _`pycassa 1.40`: http://github.com/vomjom/pycassa
 
 
 Sample Usage
@@ -49,8 +53,8 @@ Syntax for model definition is similar to Django's, but because rows can have as
             read_consistency_level = pycassa.ConsistencyLevel.ONE 
             # defaults to pycassa.ConsistencyLevel.ONE
             write_consistency_level = pycassa.ConsistencyLevel.QUORUM
-            # defaults to settings.CASSANDRA_KEYSPACE
-            keyspace = 'another_keyspace' 
+            # defaults to 'default', see settings.CASSANDRA keys
+            server_name = 'another_one'
             # defaults to False. Set to True if this is a super column family
             super_cf = False 
             

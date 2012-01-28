@@ -3,7 +3,7 @@ import inspect
 from django.conf import settings
 from django.db.models.manager import ManagerDescriptor
 
-from alexandra import client
+from alexandra import pools
 
 class MetaManager(type):
     def __init__(cls, name, bases, attrs):
@@ -32,7 +32,9 @@ class Manager(pycassa.ColumnFamily):
         self.model = model
         setattr(model, name, ManagerDescriptor(self))
         meta = model._meta
-        super(Manager, self).__init__(client, meta.keyspace, meta.object_name, dict_class=model, super=meta.super_cf)
+        self.server_name = meta.server_name if meta.server_name else 'default'
+        pool = pools[self.server_name]
+        super(Manager, self).__init__(pool, meta.object_name, dict_class=model, super=meta.super_cf)
         if meta.write_consistency_level is not None:
             self.write_consistency_level = meta.write_consistency_level
         if meta.read_consistency_level is not None:

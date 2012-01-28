@@ -1,6 +1,10 @@
-import pycassa
+from pycassa.pool import ConnectionPool
 from django.conf import settings
 
 __version__ = (0,1)
 
-client = pycassa.connect_thread_local(settings.CASSANDRA_CLUSTER)
+pools = {}
+
+for server_name, params in settings.CASSANDRA.iteritems():
+	pools[server_name] = ConnectionPool(params['KEYSPACE'], params['CLUSTER'])
+

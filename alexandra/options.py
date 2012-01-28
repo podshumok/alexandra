@@ -8,13 +8,13 @@ DEFAULT_NAMES = ('verbose_name', 'app_label', 'keyspace', 'super_cf', 'read_cons
 
 class Options(object):
     
-    def __init__(self, meta, app_label=None):
+    def __init__(self, meta, server_name='default', app_label=None):
         
         self.meta = meta
         self.app_label = app_label
         self.object_name = None
         self.verbose_name = None
-        self.keyspace = getattr(settings,'CASSANDRA_KEYSPACE','')
+        self.server_name = server_name
         self.super_cf = False
         self.pk = None
         self.read_consistency_level = None
@@ -35,8 +35,8 @@ class Options(object):
                 elif hasattr(self.meta, attr_name):
                     setattr(self, attr_name, getattr(self.meta, attr_name))
         
-        if not self.keyspace:
-            raise ConfigurationError(u"No keyspace defined! Define keyspace in your model's Meta class or CASSANDRA_KEYSPACE in settings.py")
+        #if not self.keyspace:
+        #    raise ConfigurationError(u"No keyspace defined! Define keyspace in your model's Meta class or CASSANDRA_KEYSPACE in settings.py")
         
         if getattr(settings, 'RUNNING_TESTS', False):
             self.keyspace = 'test_%s' % self.keyspace
