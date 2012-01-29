@@ -22,14 +22,13 @@ class CassandraLogger(threading.local):
                     b.remove(key, timestamp=pycassa.gm_timestamp())
                 b.send(write_consistency_level=pycassa.ConsistencyLevel.ALL)
 
-cass_loggers = dict((server_name, CassandraLogger(pool)) for server_name, pool in pools.iteritems())
+cass_loggers = dict((pool_name, CassandraLogger(pool)) for pool_name, pool in pools.iteritems())
 
 class CassandraLogInstance(object):
 
-    def __init__(self, name, server_name=None, column_family=None, keys=None, columns=None, func_time=None):
+    def __init__(self, name, pool_name=None, column_family=None, keys=None, columns=None, func_time=None):
         self.name = name
-        self.server_name = server_name
-        #self.keyspace = keyspace
+        self.pool_name = pool_name
         self.column_family = column_family
         self.keys = keys
         self.columns = columns
@@ -56,10 +55,10 @@ def logged_func(func):
             for key in ('column', 'columns','super_column'):
                 if key in kwargs:
                     log_args['columns'] = kwargs[key]
-            log_args['server_name'] = instance.server_name
+            log_args['pool_name'] = instance.pool_name
             log_args['column_family'] = instance.column_family
             log_args['func_time'] = func_time
-            cass_loggers[instance.server_name].log.append(CassandraLogInstance(func.func_name, **log_args))
+            cass_loggers[instance.pool_name].log.append(CassandraLogInstance(func.func_name, **log_args))
         return val
     inner._decorated = True
     return inner

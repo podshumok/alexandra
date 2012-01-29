@@ -1,4 +1,5 @@
 import pycassa
+import alexandra
 import inspect
 from django.conf import settings
 from django.db.models.manager import ManagerDescriptor
@@ -19,9 +20,8 @@ class MetaManager(type):
             for attr, value in attrs.items():
                 if not attr.startswith('_') and inspect.isfunction(value):
                     setattr(cls, attr, logged_func(value))
- 
 
-class Manager(pycassa.ColumnFamily):
+class Manager(alexandra.CF):
     
     __metaclass__ = MetaManager
     
@@ -32,14 +32,15 @@ class Manager(pycassa.ColumnFamily):
         self.model = model
         setattr(model, name, ManagerDescriptor(self))
         meta = model._meta
-        self.server_name = meta.server_name if meta.server_name else 'default'
-        pool = pools[self.server_name]
+        self.pool_name = meta.pool_name if meta.pool_name else 'default'
+        pool = pools[self.pool_name]
+        if pool is None:
+            params = settings.CASSANDRA[self.pool_name]
+            pools[self.pool_name] = alexandra.Pool(params['KEYSPACE'], params['CLUSTER'])
+            pool = pools[self.pool_name]
         super(Manager, self).__init__(pool, meta.object_name, dict_class=model, super=meta.super_cf)
-        if meta.write_consistency_level is not None:
-            self.write_consistency_level = meta.write_consistency_level
-        if meta.read_consistency_level is not None:
-            self.read_consistency_level = meta.read_consistency_level
-    
+        meta.apply_names(self)
+
     def get(self, key, **kwargs):
         if 'column_count' not in kwargs:
             kwargs['column_count'] = 1000000
@@ -64,9 +65,9 @@ class Manager(pycassa.ColumnFamily):
         for k,v in columns.iteritems():
             if isinstance(v, dict):
                 for subk, subv in v.iteritems():
-                    columns[k][subk] = unicode(subv)
+                    columns[k][subk] = (subv)
             else:
-                columns[k] = unicode(v)
+                columns[k] = (v)
         return super(Manager, self).insert(key, columns, write_consistency_level=write_consistency_level)
         
     def _remove(self, key, column=None, write_consistency_level = None):

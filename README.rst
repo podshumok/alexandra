@@ -16,8 +16,8 @@ add CASSANDRA CLUSTER and KEYSPACE to ``settings.py`` ::
         'default': {
             'CLUSTER':  ('localhost:9160',),
             'KEYSPACE': 'my_keyspace'
-    },
-}
+        },
+    }
 
 .. _`pycassa 1.40`: http://github.com/vomjom/pycassa
 
@@ -57,12 +57,15 @@ Syntax for model definition is similar to Django's, but because rows can have as
             server_name = 'another_one'
             # defaults to False. Set to True if this is a super column family
             super_cf = False 
+            # and any other cf options, known to pycassa
             
     
         def save(self, *args, **kwargs):
             super(Event, self).save(*args, **kwargs)
             TrackingUUID.objects.add_event(self['uuid'], self.pk)
         
+You can create keyspace and column families for your apps by adding alexandra to your ``settings.INSTALLED_APPS`` and running: ::
+    ./manage.py sync_cassandra
 
 Queries use the pycassa query api, along with whatever other methods you want to define in your manager. ::
         

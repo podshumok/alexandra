@@ -1,10 +1,10 @@
-from pycassa.pool import ConnectionPool
+import pycassa
+from pycassa import types
 from django.conf import settings
 
-__version__ = (0,1)
+__version__ = (0,2)
 
-pools = {}
+pools = dict( ((pool_name, None) for pool_name in settings.CASSANDRA) )
 
-for server_name, params in settings.CASSANDRA.iteritems():
-	pools[server_name] = ConnectionPool(params['KEYSPACE'], params['CLUSTER'])
-
+Pool = pycassa.ConnectionPool
+CF = pycassa.ColumnFamily

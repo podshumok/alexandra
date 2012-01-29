@@ -2,10 +2,9 @@ import sys
 import pycassa
 from odict import OrderedDict
 from django.db.models.base import subclass_exception
-
 from alexandra.options import Options
 from alexandra.exceptions import AlexandraException
-from alexandra.manager import Manager
+#from alexandra.manager import Manager
 
 class ColumnFamilyBase(type):
 
