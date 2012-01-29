@@ -74,7 +74,7 @@ class Command(NoArgsCommand):
                         resp = raw_input(msg)
                         if not resp or resp[0] != 'y':
                             print "Ok, then we're done here."
-                            return
+                            continue
                         sys.drop_column_family(params['KEYSPACE'], meta.object_name)
                     sys.create_column_family(
                         keyspace = params['KEYSPACE'],
