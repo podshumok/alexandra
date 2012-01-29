@@ -6,10 +6,9 @@ def read(fname):
 
 README = read('README.rst')
 
-
 setup(
     name = "alexandra",
-    version = '0.1',
+    version = '0.2',
     description = 'A thin abstraction over pycassa to interact with Cassandra from Django.',
     long_description = README,
     url = 'http://github.com/dziegler/alexandra',
@@ -19,7 +18,7 @@ setup(
     zip_safe = False,
     packages = find_packages(),
     install_requires = [
-        'pycassa>=0.2'
+        'pycassa>=1.4'
     ],
     classifiers = [
         'Environment :: Web Environment',
