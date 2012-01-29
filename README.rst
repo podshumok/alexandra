@@ -8,7 +8,7 @@ Installation
 
 Requires Django and `pycassa 1.40`_ or greater::
 
-    pip install -e git+http://github.com/dziegler/alexandra.git#egg=alexandra  
+    pip install -e git+http://github.com/podshumok/alexandra.git#egg=alexandra  
     
 add CASSANDRA CLUSTER and KEYSPACE to ``settings.py`` ::
     
@@ -19,7 +19,7 @@ add CASSANDRA CLUSTER and KEYSPACE to ``settings.py`` ::
         },
     }
 
-.. _`pycassa 1.40`: http://github.com/vomjom/pycassa
+.. _`pycassa 1.40`: http://github.com/pycassa/pycassa
 
 
 Sample Usage
@@ -65,8 +65,9 @@ Syntax for model definition is similar to Django's, but because rows can have as
             TrackingUUID.objects.add_event(self['uuid'], self.pk)
         
 You can create keyspace and column families for your apps by adding alexandra to your ``settings.INSTALLED_APPS`` and running: ::
-    ./manage.py sync_cassandra
 
+        ./manage.py sync_cassandra
+        
 Queries use the pycassa query api, along with whatever other methods you want to define in your manager. ::
         
         import uuid
