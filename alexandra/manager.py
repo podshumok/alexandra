@@ -57,7 +57,7 @@ class Manager(alexandra.CF):
         return objs
     
     def insert(self, key, columns, write_consistency_level=None):
-        obj = self.model(**columns)
+        obj = self.model(columns)
         obj.pk = key
         return obj.save(write_consistency_level=write_consistency_level)
     
