@@ -36,7 +36,8 @@ class Manager(alexandra.CF):
         pool = pools[self.pool_name]
         if pool is None:
             params = settings.CASSANDRA[self.pool_name]
-            pools[self.pool_name] = alexandra.Pool(params['KEYSPACE'], params['CLUSTER'])
+            adv = params.get('PARAMS', {})
+            pools[self.pool_name] = alexandra.Pool(params['KEYSPACE'], params['CLUSTER'], **adv)
             pool = pools[self.pool_name]
         super(Manager, self).__init__(pool, meta.object_name, dict_class=model, super=meta.super_cf)
         meta.apply_names(self)
